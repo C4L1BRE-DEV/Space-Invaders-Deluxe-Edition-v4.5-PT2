@@ -1,4 +1,4 @@
-# 👾 Space Invaders Deluxe (v4.0)
+# 👾 Space Invaders Deluxe Command & Pixels update (v4.0)
 > **Neon Forge Studios Presents**
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
