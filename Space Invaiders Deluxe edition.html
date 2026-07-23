@@ -1,579 +1,769 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Space Invaders - Deluxe Edition v3.5</title>
-    <style>
-        * { box-sizing: border-box; touch-action: manipulation; }
-        body {
-            background-color: #030308;
-            color: white;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            user-select: none;
-        }
-        #game-container {
-            position: relative;
-            box-shadow: 0 0 35px rgba(0, 255, 204, 0.4);
-            width: 400px;
-            height: 500px;
-        }
-        .crt::after {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-            background-size: 100% 4px;
-            pointer-events: none;
-            z-index: 10;
-        }
-        canvas {
-            border: 3px solid #00ffcc;
-            background-color: #000;
-            display: block;
-            position: absolute;
-            top: 0; left: 0;
-        }
-        .screen {
-            position: absolute;
-            top: 0; left: 0;
-            width: 400px; height: 500px;
-            background: rgba(5, 5, 13, 0.95);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-            text-align: center;
-            overflow-y: auto;
-            z-index: 20;
-        }
-        h1 { color: #00ffcc; font-size: 20px; margin-bottom: 2px; }
-        .edition-badge { color: #ffcc00; font-size: 12px; font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; }
-        h2 { color: #ffcc00; font-size: 15px; margin: 8px 0; }
-        .btn {
-            background: #00ffcc;
-            color: #000;
-            border: none;
-            padding: 10px 14px;
-            margin: 5px;
-            font-size: 13px;
-            font-weight: bold;
-            font-family: 'Courier New', Courier, monospace;
-            cursor: pointer;
-            border-radius: 4px;
-            width: 85%;
-            transition: 0.2s;
-            pointer-events: auto !important;
-        }
-        .btn:hover { background: #ff0055; color: #fff; transform: scale(1.03); }
-        .credits-text, .info-text { line-height: 1.4; font-size: 11px; color: #ddd; width: 100%; text-align: left; }
-        .highlight { color: #ffcc00; font-weight: bold; }
-        .version-title { color: #00ffcc; font-weight: bold; margin-top: 10px; margin-bottom: 2px; }
-        .hidden { display: none !important; }
-        
-        #mobile-controls {
-            display: flex;
-            justify-content: space-between;
-            width: 400px;
-            margin-top: 10px;
-        }
-        .touch-btn {
-            background: rgba(0, 255, 204, 0.2);
-            border: 2px solid #00ffcc;
-            color: white;
-            font-size: 18px;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .touch-btn:active { background: #ff0055; }
-        
-        input {
-            background: #111;
-            border: 1px solid #00ffcc;
-            color: #fff;
-            padding: 6px;
-            font-family: inherit;
-            margin: 5px;
-            text-align: center;
-        }
-        .ranking-list { width: 100%; font-size: 12px; }
-        .ranking-item { display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(0, 255, 204, 0.3); padding: 6px 0; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Space Invaders Deluxe - Neon Forge (v4.0)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', Courier, monospace;
+      user-select: none;
+    }
+
+    body {
+      background-color: #05050a;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 800px;
+      text-align: center;
+      gap: 12px;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    .title-neon {
+      font-size: 2.2rem;
+      color: #00f0ff;
+      text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
+    }
+
+    .title-neon span {
+      color: #ff007f;
+      text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f;
+    }
+
+    button {
+      background: #111;
+      color: #00f0ff;
+      border: 2px solid #00f0ff;
+      padding: 10px 20px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: 0.2s;
+      width: 280px;
+    }
+
+    button:hover {
+      background: #00f0ff;
+      color: #000;
+      box-shadow: 0 0 15px #00f0ff;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 1rem;
+      border: 2px solid #ff007f;
+      background: #000;
+      color: #fff;
+      text-align: center;
+      border-radius: 5px;
+    }
+
+    .pilot-card {
+      background: #111;
+      border: 1px solid #ff007f;
+      padding: 10px;
+      border-radius: 5px;
+      width: 280px;
+    }
+
+    #game-container {
+      position: relative;
+    }
+
+    #gameCanvas {
+      background: #000;
+      border: 3px solid #ff007f;
+      box-shadow: 0 0 20px rgba(255, 0, 127, 0.4);
+      display: block;
+    }
+
+    #hud {
+      display: flex;
+      justify-content: space-between;
+      width: 800px;
+      padding: 8px 15px;
+      background: #111;
+      border: 1px solid #333;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .modal-content {
+      background: #111;
+      border: 2px solid #00f0ff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 450px;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .ship-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .ship-card {
+      border: 1px solid #444;
+      padding: 8px;
+      border-radius: 5px;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.8rem;
+    }
+
+    .ship-card.selected {
+      border-color: #00ff66;
+      box-shadow: 0 0 8px #00ff66;
+    }
+
+    .ship-card button {
+      width: 100%;
+      padding: 5px;
+      font-size: 0.75rem;
+    }
+
+    #mobile-controls {
+      display: flex;
+      justify-content: space-around;
+      width: 800px;
+      margin-top: 8px;
+    }
+
+    #mobile-controls button {
+      width: 80px;
+      height: 45px;
+      font-size: 1.2rem;
+    }
+
+    .hidden { display: none !important; }
+  </style>
 </head>
 <body>
 
-    <div id="game-container" class="crt">
-        <canvas id="gameCanvas" width="400" height="500"></canvas>
+  <div id="screen-diagnostic" class="screen active">
+    <h2>⚡ NEON FORGE STUDIOS</h2>
+    <p>Selecione seu Dispositivo para Calibração:</p>
+    <button onclick="selectDevice('desktop')">💻 Computador / Notebook</button>
+    <button onclick="selectDevice('mobile')">📱 Celular / Tablet</button>
+  </div>
 
-        <div id="menu-screen" class="screen">
-            <h1>SPACE INVADERS 🚀</h1>
-            <div class="edition-badge">✨ DELUXE EDITION ✨</div>
-            <p id="player-profile-tag" style="color: #00ffcc; font-size: 11px; margin: 0;">Perfil: Calebe (PILOTO)</p>
-            <p id="menu-highscore" style="color: #ffcc00; font-size: 11px; margin: 3px 0 10px 0;">RECORDE: 0</p>
-            
-            <button class="btn" onclick="startGame()">▶ JOGAR</button>
-            <button class="btn" onclick="abrirRanking()">🏆 TOP 5 RECORDES</button>
-            <button class="btn" onclick="showScreen('config-screen')">⚙️ CONFIGURAÇÕES</button>
-            <button class="btn" onclick="showScreen('profile-screen')">👤 PERFIL / CRIAR</button>
-            <button class="btn" onclick="showScreen('updatelog-screen')">📋 UPDATE LOG (v3.5)</button>
-            <button class="btn" onclick="showCredits()">📜 CRÉDITOS</button>
-        </div>
+  <div id="screen-login" class="screen">
+    <h2>🎮 RECRUTAMENTO DE PILOTO</h2>
+    <p>Identifique-se para acessar o comando:</p>
+    <input type="text" id="player-nick" placeholder="Digite seu Nick..." maxlength="12">
+    <button onclick="confirmLogin()">ENTRAR NO COCKPIT</button>
+  </div>
 
-        <div id="ranking-screen" class="screen hidden">
-            <h2>🏆 TOP 5 RECORDES</h2>
-            <div id="ranking-content" class="info-text">Carregando...</div>
-            <button class="btn" style="margin-top: 15px;" onclick="showScreen('menu-screen')">VOLTAR</button>
-        </div>
-
-        <div id="updatelog-screen" class="screen hidden">
-            <h2>📋 HISTÓRICO DE ATUALIZAÇÕES</h2>
-            <div class="info-text" style="padding: 0 10px;">
-                <div class="version-title">v3.5 - Deluxe Edition (Atual)</div>
-                - Sistema de Placar Top 5 Offline Integrado!<br>
-                - Clique de mouse responsivo para notebooks<br>
-                - Escudos destrutíveis e chefe no jogo
-            </div>
-            <button class="btn" style="margin-top: 12px;" onclick="showScreen('menu-screen')">VOLTAR</button>
-        </div>
-
-        <div id="config-screen" class="screen hidden">
-            <h2>⚙️ CONFIGURAÇÕES</h2>
-            <button class="btn" onclick="showScreen('controls-screen')">🎮 VER CONTROLES</button>
-            <button class="btn" onclick="showScreen('graphics-screen')">🎨 AJUSTES GRÁFICOS</button>
-            <button class="btn" onclick="toggleSound()">🔊 SOM: <span id="sound-status">LIGADO</span></button>
-            <button class="btn" onclick="toggleMobileMode()">📲 MODO MOBILE: <span id="mobile-status">DESLIGADO</span></button>
-            <button class="btn" style="margin-top: 15px; background: #ffcc00;" onclick="showScreen('menu-screen')">⬅️ VOLTAR AO MENU</button>
-        </div>
-
-        <div id="controls-screen" class="screen hidden">
-            <h2>🎮 CONTROLES</h2>
-            <div class="info-text">
-                <p>⬅️ / ➡️ ou A / D : Mover Nave</p>
-                <p>ESPAÇO : Atirar Laser</p>
-            </div>
-            <button class="btn" onclick="showScreen('config-screen')">⬅️ VOLTAR</button>
-        </div>
-
-        <div id="graphics-screen" class="screen hidden">
-            <h2>🎨 OPÇÕES GRÁFICAS</h2>
-            <button class="btn" onclick="toggleCRT()">EFEITO CRT: <span id="crt-status">LIGADO</span></button>
-            <button class="btn" onclick="toggleStars()">FUNDO ESTRELADO: <span id="stars-status">LIGADO</span></button>
-            <button class="btn" onclick="showScreen('config-screen')">⬅️ VOLTAR</button>
-        </div>
-
-        <div id="profile-screen" class="screen hidden">
-            <h2>👤 PERFIL DE JOGADOR</h2>
-            <input type="text" id="nickname-input" placeholder="Digite seu Nick..." value="Calebe">
-            <button class="btn" onclick="saveProfile()">SALVAR PERFIL</button>
-            <button class="btn" onclick="showScreen('menu-screen')">VOLTAR</button>
-        </div>
-
-        <div id="credits-screen" class="screen hidden">
-            <h2>📜 CRÉDITOS</h2>
-            <div class="credits-text">
-                <p>💡 <span class="highlight">Ideia & Programação:</span> Calebe</p>
-                <p>💻 <span class="highlight">Programação & Design:</span> Jarvis</p>
-            </div>
-            <button class="btn" onclick="showScreen('menu-screen')">VOLTAR</button>
-        </div>
-
-        <div id="gameover-screen" class="screen hidden">
-            <h1 style="color: #ff0055;">GAME OVER 💥</h1>
-            <p id="final-score" style="font-size: 16px;">Pontos: 0</p>
-            <p id="high-score-msg" style="color: #ffcc00; font-weight: bold;"></p>
-            <button class="btn" onclick="startGame()">JOGAR DE NOVO</button>
-            <button class="btn" onclick="showScreen('menu-screen')">MENU PRINCIPAL</button>
-        </div>
+  <div id="screen-menu" class="screen">
+    <h1 class="title-neon">SPACE INVADERS<br><span>DELUXE v4.0</span></h1>
+    <div class="pilot-card">
+      <p>👨‍✈️ Piloto: <strong id="card-nick">---</strong></p>
+      <p>🪙 Space Coins: <strong id="card-coins">0</strong></p>
+      <p>🛸 Nave Atual: <strong id="card-ship">Alpha-1</strong></p>
     </div>
+    
+    <button onclick="startGame()">🚀 JOGAR FASE 1</button>
+    <button onclick="openHangar()">🛸 GARAGEM DE NAVES</button>
+    <button onclick="toggleModal('modal-update')">📜 UPDATE LOG</button>
+    <button onclick="toggleModal('modal-credits')">🏆 CRÉDITOS</button>
+  </div>
 
+  <div id="screen-game" class="screen">
+    <div id="hud">
+      <span>SCORE: <b id="hud-score" style="color: #00f0ff;">0</b></span>
+      <span>FASE: <b id="hud-level" style="color: #ff007f;">1</b></span>
+      <span>COINS: <b id="hud-coins" style="color: #ffd700;">0</b></span>
+      <span>VIDAS: <b id="hud-lives" style="color: #00ff66;">3</b></span>
+    </div>
+    <div id="game-container">
+      <canvas id="gameCanvas" width="800" height="500"></canvas>
+    </div>
+    
     <div id="mobile-controls" class="hidden">
-        <button class="touch-btn" id="btn-left">⬅️</button>
-        <button class="touch-btn" id="btn-fire" style="background: rgba(255, 0, 85, 0.4); border-color: #ff0055;">🔥 ATIRAR</button>
-        <button class="touch-btn" id="btn-right">➡️</button>
+      <button id="btn-left">⬅️</button>
+      <button id="btn-fire">💥 TIRO</button>
+      <button id="btn-right">➡️</button>
+      <button id="btn-pause" onclick="togglePause()">⏸️</button>
     </div>
+  </div>
 
-<script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
+  <div id="modal-hangar" class="modal hidden">
+    <div class="modal-content">
+      <h3>🛸 GARAGEM DE NAVES (10 MODELOS)</h3>
+      <p>Suas Moedas: <span id="hangar-coins" style="color:#ffd700">0</span></p>
+      <div id="ship-grid" class="ship-grid"></div>
+      <button onclick="toggleModal('modal-hangar')">FECHAR</button>
+    </div>
+  </div>
 
-    let gameState = "MENU";
-    let soundEnabled = true;
-    let mobileEnabled = false;
-    let crtEnabled = true;
-    let starsEnabled = true;
-    let playerName = localStorage.getItem("space_player") || "Calebe";
+  <div id="modal-pause" class="modal hidden">
+    <div class="modal-content">
+      <h3>⏸️ JOGO PAUSADO</h3>
+      <button onclick="togglePause()">RESUMIR JOGO</button>
+      <button onclick="quitToMenu()">SAIR PARA O MENU</button>
+    </div>
+  </div>
 
-    let score = 0;
-    let highScore = localStorage.getItem("space_highscore") || 0;
-    let lives = 3;
-    let wave = 1;
-    let stars = [];
+  <div id="modal-credits" class="modal hidden">
+    <div class="modal-content">
+      <h3>🏆 CRÉDITOS OFICIAIS</h3>
+      <p><b>Ideias, Design & Programação:</b> Calebe (C4L1BRE_DEV)</p>
+      <p><b>Programação & Músicas:</b> Jarvis</p>
+      <p><b>Beta Testing:</b> Pedro Lucas</p>
+      <p style="font-size:0.8rem; color:#888;">Desenvolvido por Neon Forge Studios</p>
+      <button onclick="toggleModal('modal-credits')">FECHAR</button>
+    </div>
+  </div>
 
-    document.getElementById("menu-highscore").innerText = `RECORDE: ${highScore}`;
-    document.getElementById("player-profile-tag").innerText = `Perfil: ${playerName} (PILOTO)`;
+  <div id="modal-update" class="modal hidden">
+    <div class="modal-content">
+      <h3>📜 UPDATE LOG - v4.0</h3>
+      <p>• Acesso livre oficial sem exigência de chave beta.</p>
+      <p>• Garagem com 10 Naves exclusivas com atributos de velocidade e vida.</p>
+      <p>• Sistema de Inimigos que Atiram e Chefão com barra de HP na Fase 3.</p>
+      <p>• Drops de Power-ups: [P] Tiro Triplo, [S] Escudo e [T] Congelar Tempo.</p>
+      <p>• 3 Escudos Destrutíveis no campo de batalha.</p>
+      <button onclick="toggleModal('modal-update')">FECHAR</button>
+    </div>
+  </div>
 
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playSound(type) {
-        if (!soundEnabled) return;
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        const now = audioCtx.currentTime;
+  <script>
+    // BASE DE DADOS DAS NAVES
+    const SHIPS_DATA = [
+      { id: 0, name: "Alpha-1", price: 0, color: "#00ff66", speed: 5, hp: 3 },
+      { id: 1, name: "Striker-V", price: 100, color: "#00f0ff", speed: 6, hp: 3 },
+      { id: 2, name: "Viper-X", price: 250, color: "#ff007f", speed: 7, hp: 3 },
+      { id: 3, name: "Phantom", price: 500, color: "#a855f7", speed: 6, hp: 4 },
+      { id: 4, name: "Aegis Shield", price: 750, color: "#3b82f6", speed: 5, hp: 5 },
+      { id: 5, name: "Solaris", price: 1000, color: "#eab308", speed: 8, hp: 3 },
+      { id: 6, name: "Nebula Crusher", price: 1500, color: "#ec4899", speed: 6, hp: 5 },
+      { id: 7, name: "Hyperion", price: 2000, color: "#f97316", speed: 8, hp: 4 },
+      { id: 8, name: "Omega Titan", price: 3000, color: "#ef4444", speed: 7, hp: 6 },
+      { id: 9, name: "Galactic Dominator", price: 5000, color: "#10b981", speed: 9, hp: 6 }
+    ];
 
-        if (type === 'laser') {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(800, now);
-            osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
-            gain.gain.setValueAtTime(0.15, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
-            osc.start(now); osc.stop(now + 0.15);
-        } else if (type === 'explosion') {
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(150, now);
-            osc.frequency.exponentialRampToValueAtTime(30, now + 0.2);
-            gain.gain.setValueAtTime(0.2, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
-            osc.start(now); osc.stop(now + 0.2);
-        }
+    // ESTADO DO JOGADOR
+    let playerData = {
+      nick: "Piloto",
+      coins: 0,
+      selectedShip: 0,
+      unlockedShips: [0],
+      device: "desktop"
+    };
+
+    // CONTROLES DE INTERFACE
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
     }
 
-    for (let i = 0; i < 50; i++) {
-        stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2, speed: Math.random() * 1 + 0.5 });
+    function toggleModal(id) {
+      document.getElementById(id).classList.toggle('hidden');
     }
 
-    let player, bullets, enemyBullets, aliens, alienDirection, speedMultiplier, boss, shields;
-
-    function initShields() {
-        shields = [];
-        const shieldPositions = [60, 180, 300];
-        shieldPositions.forEach(x => {
-            shields.push({ x: x, y: 390, width: 45, height: 25, hp: 10, maxHp: 10 });
-        });
+    function selectDevice(dev) {
+      playerData.device = dev;
+      if (dev === 'mobile') {
+        document.getElementById('mobile-controls').classList.remove('hidden');
+      }
+      showScreen('screen-login');
     }
 
-    function initGame() {
-        player = { x: 180, y: 450, width: 40, height: 15, speed: 5, dx: 0 };
-        bullets = [];
-        enemyBullets = [];
-        aliens = [];
-        boss = null;
-        score = 0;
-        lives = 3;
-        wave = 1;
-        alienDirection = 1;
-        speedMultiplier = 1;
-        initShields();
-        spawnWave();
+    function confirmLogin() {
+      const input = document.getElementById('player-nick').value.trim();
+      if (input.length > 0) playerData.nick = input;
+
+      const saved = localStorage.getItem(`player_${playerData.nick}`);
+      if (saved) {
+        playerData = JSON.parse(saved);
+      } else {
+        savePlayerData();
+      }
+
+      updateUI();
+      showScreen('screen-menu');
     }
 
-    function spawnWave() {
-        aliens = [];
-        boss = null;
-        if (wave % 3 === 0) {
-            boss = { x: 150, y: 50, width: 100, height: 40, hp: 15 + (wave * 5), maxHp: 15 + (wave * 5), dx: 2 };
+    function savePlayerData() {
+      localStorage.setItem(`player_${playerData.nick}`, JSON.stringify(playerData));
+    }
+
+    function updateUI() {
+      document.getElementById('card-nick').innerText = playerData.nick;
+      document.getElementById('card-coins').innerText = playerData.coins;
+      document.getElementById('card-ship').innerText = SHIPS_DATA[playerData.selectedShip].name;
+    }
+
+    function openHangar() {
+      document.getElementById('hangar-coins').innerText = playerData.coins;
+      const grid = document.getElementById('ship-grid');
+      grid.innerHTML = "";
+
+      SHIPS_DATA.forEach(ship => {
+        const isUnlocked = playerData.unlockedShips.includes(ship.id);
+        const isSelected = playerData.selectedShip === ship.id;
+
+        const card = document.createElement('div');
+        card.className = `ship-card ${isSelected ? 'selected' : ''}`;
+        card.innerHTML = `
+          <strong style="color:${ship.color}">${ship.name}</strong>
+          <span>Velocidade: ${ship.speed} | HP: ${ship.hp}</span>
+          <span>${isUnlocked ? '🔓 Adquirida' : `🪙 ${ship.price} Coins`}</span>
+        `;
+
+        const btn = document.createElement('button');
+        if (isSelected) {
+          btn.innerText = "EQUIPADA";
+          btn.disabled = true;
+        } else if (isUnlocked) {
+          btn.innerText = "EQUIPAR";
+          btn.onclick = () => {
+            playerData.selectedShip = ship.id;
+            savePlayerData();
+            updateUI();
+            openHangar();
+          };
         } else {
-            for (let r = 0; r < 3; r++) {
-                for (let c = 0; c < 6; c++) {
-                    aliens.push({ x: 30 + c * 55, y: 40 + r * 40, width: 35, height: 20, alive: true });
-                }
+          btn.innerText = "COMPRAR";
+          btn.onclick = () => {
+            if (playerData.coins >= ship.price) {
+              playerData.coins -= ship.price;
+              playerData.unlockedShips.push(ship.id);
+              playerData.selectedShip = ship.id;
+              savePlayerData();
+              updateUI();
+              openHangar();
+            } else {
+              alert("Moedas insuficientes!");
             }
+          };
         }
+        card.appendChild(btn);
+        grid.appendChild(card);
+      });
+
+      toggleModal('modal-hangar');
     }
 
-    document.addEventListener("keydown", (e) => {
-        if (gameState !== "PLAYING") return;
-        if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") player.dx = -player.speed;
-        if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") player.dx = player.speed;
-        if (e.key === " " || e.code === "Space") {
-            e.preventDefault();
-            fireBullet();
-        }
+    // MOTOR DO JOGO (CANVAS ENGINE v4.0)
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let gameLoopId = null;
+    let isPaused = false;
+
+    let level = 1;
+    let score = 0;
+    let coinsEarned = 0;
+
+    let player = { x: 380, y: 440, w: 40, h: 20, speed: 5, lives: 3, color: '#00ff66', tripleShot: 0, shieldActive: false };
+    let bullets = [];
+    let enemyBullets = [];
+    let enemies = [];
+    let shields = [];
+    let powerups = [];
+    let coinsList = [];
+    let boss = null;
+    let ufo = null;
+
+    let enemyDirection = 1;
+    let enemyStepDown = false;
+    let enemyShootTimer = 0;
+    let freezeTimer = 0;
+
+    const keys = {};
+
+    window.addEventListener('keydown', e => {
+      keys[e.key] = true;
+      if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') togglePause();
+      if ((e.key === ' ' || e.key === 'Spacebar') && !isPaused) firePlayerBullet();
     });
 
-    document.addEventListener("keyup", (e) => {
-        if (e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "a" || e.key === "A" || e.key === "d" || e.key === "D") {
-            if (player) player.dx = 0;
-        }
-    });
+    window.addEventListener('keyup', e => keys[e.key] = false);
 
-    canvas.addEventListener("click", () => {
-        if (gameState === "PLAYING") fireBullet();
-    });
-
-    const btnLeft = document.getElementById("btn-left");
-    const btnRight = document.getElementById("btn-right");
-    const btnFire = document.getElementById("btn-fire");
-
-    btnLeft.addEventListener("touchstart", (e) => { e.preventDefault(); if (player) player.dx = -player.speed; });
-    btnLeft.addEventListener("touchend", (e) => { e.preventDefault(); if (player) player.dx = 0; });
-    btnRight.addEventListener("touchstart", (e) => { e.preventDefault(); if (player) player.dx = player.speed; });
-    btnRight.addEventListener("touchend", (e) => { e.preventDefault(); if (player) player.dx = 0; });
-    btnFire.addEventListener("touchstart", (e) => { e.preventDefault(); fireBullet(); });
-
-    function fireBullet() {
-        if (bullets.length < 3) {
-            bullets.push({ x: player.x + player.width / 2 - 2, y: player.y, width: 4, height: 10 });
-            playSound('laser');
-        }
-    }
-
-    function showScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-        document.getElementById(screenId).classList.remove('hidden');
-    }
-
-    // Ranking Local Seguro
-    function abrirRanking() {
-        showScreen('ranking-screen');
-        const container = document.getElementById("ranking-content");
-        let scores = JSON.parse(localStorage.getItem("space_top5")) || [
-            { player: "Calebe", score: 100 },
-            { player: "Piloto Beta", score: 50 }
-        ];
-
-        scores.sort((a, b) => b.score - a.score);
-
-        let html = "<div class='ranking-list'>";
-        scores.slice(0, 5).forEach((item, pos) => {
-            html += `<div class='ranking-item'>
-                <span>${pos + 1}. ${item.player}</span>
-                <span style='color: #ffcc00;'>${item.score} pts</span>
-            </div>`;
-        });
-        html += "</div>";
-        container.innerHTML = html;
-    }
-
-    function salvarPontuacaoLocal(nome, pontos) {
-        let scores = JSON.parse(localStorage.getItem("space_top5")) || [];
-        scores.push({ player: nome, score: pontos });
-        scores.sort((a, b) => b.score - a.score);
-        scores = scores.slice(0, 5);
-        localStorage.setItem("space_top5", JSON.stringify(scores));
-    }
-
-    function showCredits() { showScreen('credits-screen'); }
-
-    function toggleSound() {
-        soundEnabled = !soundEnabled;
-        document.getElementById("sound-status").innerText = soundEnabled ? "LIGADO" : "DESLIGADO";
-    }
-
-    function toggleMobileMode() {
-        mobileEnabled = !mobileEnabled;
-        document.getElementById("mobile-status").innerText = mobileEnabled ? "LIGADO" : "DESLIGADO";
-        document.getElementById("mobile-controls").classList.toggle("hidden", !mobileEnabled);
-    }
-
-    function toggleCRT() {
-        crtEnabled = !crtEnabled;
-        document.getElementById("game-container").classList.toggle("crt", crtEnabled);
-        document.getElementById("crt-status").innerText = crtEnabled ? "LIGADO" : "DESLIGADO";
-    }
-
-    function toggleStars() {
-        starsEnabled = !starsEnabled;
-        document.getElementById("stars-status").innerText = starsEnabled ? "LIGADO" : "DESLIGADO";
-    }
-
-    function saveProfile() {
-        const val = document.getElementById("nickname-input").value;
-        if (val) {
-            playerName = val;
-            localStorage.setItem("space_player", playerName);
-            document.getElementById("player-profile-tag").innerText = `Perfil: ${playerName} (PILOTO)`;
-            alert("Perfil Salvo!");
-            showScreen('menu-screen');
-        }
-    }
+    // BOTOES MOBILE
+    document.getElementById('btn-left').addEventListener('touchstart', () => keys['ArrowLeft'] = true);
+    document.getElementById('btn-left').addEventListener('touchend', () => keys['ArrowLeft'] = false);
+    document.getElementById('btn-right').addEventListener('touchstart', () => keys['ArrowRight'] = true);
+    document.getElementById('btn-right').addEventListener('touchend', () => keys['ArrowRight'] = false);
+    document.getElementById('btn-fire').addEventListener('click', () => firePlayerBullet());
 
     function startGame() {
-        initGame();
-        gameState = "PLAYING";
-        document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+      level = 1;
+      score = 0;
+      coinsEarned = 0;
+      initLevel();
+      showScreen('screen-game');
+      isPaused = false;
+      gameLoop();
     }
 
-    function gameOver() {
-        gameState = "GAMEOVER";
-        document.getElementById("final-score").innerText = `Pontos Totais: ${score}`;
+    function initLevel() {
+      const shipSpec = SHIPS_DATA[playerData.selectedShip];
+      player.x = 380;
+      player.y = 440;
+      player.speed = shipSpec.speed;
+      player.lives = shipSpec.hp;
+      player.color = shipSpec.color;
+      player.tripleShot = 0;
+      player.shieldActive = false;
 
-        if (score > 0) {
-            salvarPontuacaoLocal(playerName, score);
-        }
+      bullets = [];
+      enemyBullets = [];
+      powerups = [];
+      coinsList = [];
+      boss = null;
+      ufo = null;
 
-        if (score > highScore) {
-            highScore = score;
-            localStorage.setItem("space_highscore", highScore);
-            document.getElementById("high-score-msg").innerText = "🎉 NOVO RECORDE!";
-            document.getElementById("menu-highscore").innerText = `RECORDE: ${highScore}`;
-        } else {
-            document.getElementById("high-score-msg").innerText = "";
+      // Criar Escudos
+      shields = [];
+      for (let i = 0; i < 3; i++) {
+        shields.push({ x: 150 + i * 220, y: 370, w: 70, h: 30, hp: 10 });
+      }
+
+      // Criar Inimigos ou Boss
+      enemies = [];
+      if (level === 3) {
+        // Fase do Chefão
+        boss = { x: 320, y: 50, w: 160, h: 60, hp: 50, maxHp: 50, speed: 3, dir: 1 };
+      } else {
+        const rows = 3 + level;
+        const cols = 8;
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            enemies.push({ x: 100 + c * 70, y: 50 + r * 35, w: 35, h: 25, alive: true });
+          }
         }
-        showScreen('gameover-screen');
+      }
+    }
+
+    function firePlayerBullet() {
+      if (player.tripleShot > 0) {
+        bullets.push({ x: player.x + 18, y: player.y, dx: 0, dy: -8 });
+        bullets.push({ x: player.x + 5, y: player.y, dx: -2, dy: -8 });
+        bullets.push({ x: player.x + 30, y: player.y, dx: 2, dy: -8 });
+      } else {
+        bullets.push({ x: player.x + 18, y: player.y, dx: 0, dy: -8 });
+      }
+    }
+
+    function togglePause() {
+      isPaused = !isPaused;
+      toggleModal('modal-pause');
+      if (!isPaused) gameLoop();
+    }
+
+    function quitToMenu() {
+      if (modalOpen('modal-pause')) toggleModal('modal-pause');
+      cancelAnimationFrame(gameLoopId);
+      showScreen('screen-menu');
+    }
+
+    function modalOpen(id) {
+      return !document.getElementById(id).classList.contains('hidden');
     }
 
     function update() {
-        if (starsEnabled) {
-            stars.forEach(s => {
-                s.y += s.speed;
-                if (s.y > canvas.height) s.y = 0;
-            });
+      if (isPaused) return;
+
+      // Movimento Jogador
+      if ((keys['ArrowLeft'] || keys['a']) && player.x > 0) player.x -= player.speed;
+      if ((keys['ArrowRight'] || keys['d']) && player.x < canvas.width - player.w) player.x += player.speed;
+
+      // Timers de Buff
+      if (player.tripleShot > 0) player.tripleShot--;
+      if (freezeTimer > 0) freezeTimer--;
+
+      // Mover Balas do Jogador
+      bullets.forEach((b, idx) => {
+        b.x += (b.dx || 0);
+        b.y += b.dy;
+        if (b.y < 0) bullets.splice(idx, 1);
+      });
+
+      // Mover Balas Inimigas
+      enemyBullets.forEach((eb, idx) => {
+        eb.y += 5;
+        // Colisão com Jogador
+        if (eb.x > player.x && eb.x < player.x + player.w && eb.y > player.y && eb.y < player.y + player.h) {
+          enemyBullets.splice(idx, 1);
+          if (player.shieldActive) {
+            player.shieldActive = false;
+          } else {
+            player.lives--;
+            if (player.lives <= 0) gameOver();
+          }
+        } else if (eb.y > canvas.height) {
+          enemyBullets.splice(idx, 1);
         }
+      });
 
-        if (gameState !== "PLAYING") return;
-
-        player.x += player.dx;
-        if (player.x < 0) player.x = 0;
-        if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
-
-        bullets.forEach((b, bIndex) => {
-            b.y -= 7;
-            shields.forEach((s) => {
-                if (s.hp > 0 && b.x > s.x && b.x < s.x + s.width && b.y > s.y && b.y < s.y + s.height) {
-                    s.hp--;
-                    bullets.splice(bIndex, 1);
-                }
-            });
-            if (b.y < 0) bullets.splice(bIndex, 1);
+      // Mover Inimigos (Se não estiver congelado)
+      if (freezeTimer === 0 && enemies.length > 0) {
+        let touchEdge = false;
+        enemies.forEach(e => {
+          if (!e.alive) return;
+          e.x += enemyDirection * (1 + level * 0.5);
+          if (e.x > canvas.width - 40 || e.x < 10) touchEdge = true;
         });
 
-        enemyBullets.forEach((eb, ebIndex) => {
-            eb.y += 4;
-            shields.forEach((s) => {
-                if (s.hp > 0 && eb.x > s.x && eb.x < s.x + s.width && eb.y > s.y && eb.y < s.y + s.height) {
-                    s.hp--;
-                    enemyBullets.splice(ebIndex, 1);
-                }
-            });
-            if (eb.x > player.x && eb.x < player.x + player.width && eb.y > player.y && eb.y < player.y + player.height) {
-                enemyBullets.splice(ebIndex, 1);
-                lives--;
-                playSound('explosion');
-                if (lives <= 0) gameOver();
+        if (touchEdge) {
+          enemyDirection *= -1;
+          enemies.forEach(e => e.y += 15);
+        }
+
+        // Inimigos Atiram
+        enemyShootTimer++;
+        if (enemyShootTimer > Math.max(20, 60 - level * 10)) {
+          enemyShootTimer = 0;
+          const aliveEnemies = enemies.filter(e => e.alive);
+          if (aliveEnemies.length > 0) {
+            const shooter = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
+            enemyBullets.push({ x: shooter.x + 15, y: shooter.y + 20 });
+          }
+        }
+      }
+
+      // Mover Chefão (Fase 3)
+      if (boss) {
+        boss.x += boss.speed * boss.dir;
+        if (boss.x > canvas.width - boss.w || boss.x < 0) boss.dir *= -1;
+
+        if (Math.random() < 0.05) {
+          enemyBullets.push({ x: boss.x + Math.random() * boss.w, y: boss.y + boss.h });
+        }
+      }
+
+      // UFO Bônus Aparecimento Aleatório
+      if (!ufo && Math.random() < 0.002) {
+        ufo = { x: 0, y: 20, w: 45, h: 20, speed: 3 };
+      }
+      if (ufo) {
+        ufo.x += ufo.speed;
+        if (ufo.x > canvas.width) ufo = null;
+      }
+
+      // Colisões de Balas vs Inimigos
+      bullets.forEach((b, bIdx) => {
+        // Colisão com UFO
+        if (ufo && b.x > ufo.x && b.x < ufo.x + ufo.w && b.y > ufo.y && b.y < ufo.y + ufo.h) {
+          score += 100;
+          coinsList.push({ x: ufo.x, y: ufo.y, val: 20 });
+          ufo = null;
+          bullets.splice(bIdx, 1);
+          return;
+        }
+
+        // Colisão com Boss
+        if (boss && b.x > boss.x && b.x < boss.x + boss.w && b.y > boss.y && b.y < boss.y + boss.h) {
+          boss.hp--;
+          score += 20;
+          bullets.splice(bIdx, 1);
+          if (boss.hp <= 0) {
+            score += 1000;
+            coinsEarned += 200;
+            boss = null;
+            nextLevel();
+          }
+          return;
+        }
+
+        // Colisão com Inimigos Padrão
+        enemies.forEach(e => {
+          if (e.alive && b.x > e.x && b.x < e.x + e.w && b.y > e.y && b.y < e.y + e.h) {
+            e.alive = false;
+            bullets.splice(bIdx, 1);
+            score += 10;
+
+            // Drop de Moedas ou Power-ups
+            if (Math.random() < 0.3) coinsList.push({ x: e.x, y: e.y, val: 5 });
+            if (Math.random() < 0.1) {
+              const types = ['P', 'S', 'T'];
+              powerups.push({ x: e.x, y: e.y, type: types[Math.floor(Math.random() * types.length)] });
             }
-            if (eb.y > canvas.height) enemyBullets.splice(ebIndex, 1);
+          }
         });
 
-        if (boss) {
-            boss.x += boss.dx;
-            if (boss.x <= 10 || boss.x + boss.width >= canvas.width - 10) boss.dx *= -1;
-            if (Math.random() < 0.04) enemyBullets.push({ x: boss.x + 20, y: boss.y + boss.height, width: 5, height: 10 });
+        // Colisão com Escudos
+        shields.forEach(s => {
+          if (s.hp > 0 && b.x > s.x && b.x < s.x + s.w && b.y > s.y && b.y < s.y + s.h) {
+            s.hp--;
+            bullets.splice(bIdx, 1);
+          }
+        });
+      });
 
-            bullets.forEach((b, bIndex) => {
-                if (b.x > boss.x && b.x < boss.x + boss.width && b.y > boss.y && b.y < boss.y + boss.height) {
-                    boss.hp--;
-                    bullets.splice(bIndex, 1);
-                    if (boss.hp <= 0) {
-                        score += 300;
-                        playSound('explosion');
-                        boss = null; wave++; spawnWave();
-                    }
-                }
-            });
-        } else {
-            let changeDir = false;
-            let aliveAliens = [];
+      // Mover e Coletar Moedas
+      coinsList.forEach((c, idx) => {
+        c.y += 2;
+        if (c.x > player.x && c.x < player.x + player.w && c.y > player.y && c.y < player.y + player.h) {
+          coinsEarned += c.val;
+          coinsList.splice(idx, 1);
+        } else if (c.y > canvas.height) coinsList.splice(idx, 1);
+      });
 
-            aliens.forEach(a => {
-                if (a.alive) {
-                    aliveAliens.push(a);
-                    a.x += alienDirection * (0.6 * speedMultiplier);
-                    if (a.x + a.width > canvas.width - 10 || a.x < 10) changeDir = true;
-                    if (a.y + a.height >= player.y) gameOver();
-                }
-            });
+      // Mover e Coletar Power-ups
+      powerups.forEach((p, idx) => {
+        p.y += 2;
+        if (p.x > player.x && p.x < player.x + player.w && p.y > player.y && p.y < player.y + player.h) {
+          if (p.type === 'P') player.tripleShot = 300; // ~5 segundos
+          if (p.type === 'S') player.shieldActive = true;
+          if (p.type === 'T') freezeTimer = 180; // ~3 segundos
+          powerups.splice(idx, 1);
+        } else if (p.y > canvas.height) powerups.splice(idx, 1);
+      });
 
-            if (aliveAliens.length > 0 && Math.random() < (0.015 * wave)) {
-                let randomAlien = aliveAliens[Math.floor(Math.random() * aliveAliens.length)];
-                enemyBullets.push({ x: randomAlien.x + randomAlien.width / 2, y: randomAlien.y + randomAlien.height, width: 4, height: 8 });
-            }
+      // Checar Fim de Fase (Se todos os inimigos morreram)
+      if (enemies.length > 0 && enemies.every(e => !e.alive)) {
+        nextLevel();
+      }
 
-            if (aliveAliens.length === 0) { wave++; speedMultiplier += 0.2; spawnWave(); }
-
-            if (changeDir) {
-                alienDirection *= -1;
-                aliens.forEach(a => { if (a.alive) a.y += 10; });
-            }
-
-            bullets.forEach((b, bIndex) => {
-                aliens.forEach(a => {
-                    if (a.alive && b.x > a.x && b.x < a.x + a.width && b.y > a.y && b.y < a.y + a.height) {
-                        a.alive = false;
-                        playSound('explosion');
-                        bullets.splice(bIndex, 1);
-                        score += 10;
-                    }
-                });
-            });
-        }
+      // Atualizar HUD
+      document.getElementById('hud-score').innerText = score;
+      document.getElementById('hud-level').innerText = level;
+      document.getElementById('hud-coins').innerText = playerData.coins + coinsEarned;
+      document.getElementById('hud-lives').innerText = player.lives;
     }
 
     function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        if (starsEnabled) {
-            ctx.fillStyle = "#fff";
-            stars.forEach(s => ctx.fillRect(s.x, s.y, s.size, s.size));
+      // Desenhar Escudos
+      shields.forEach(s => {
+        if (s.hp > 0) {
+          ctx.fillStyle = `rgba(0, 240, 255, ${s.hp / 10})`;
+          ctx.fillRect(s.x, s.y, s.w, s.h);
         }
+      });
 
-        if (gameState === "PLAYING") {
-            ctx.fillStyle = "#00ffcc";
-            ctx.fillRect(player.x, player.y, player.width, player.height);
+      // Desenhar Jogador
+      ctx.fillStyle = player.color;
+      ctx.fillRect(player.x, player.y, player.w, player.h);
+      if (player.shieldActive) {
+        ctx.strokeStyle = '#00f0ff';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(player.x - 5, player.y - 5, player.w + 10, player.h + 10);
+      }
 
-            shields.forEach(s => {
-                if (s.hp > 0) {
-                    const alpha = s.hp / s.maxHp;
-                    ctx.fillStyle = `rgba(0, 255, 100, ${alpha})`;
-                    ctx.fillRect(s.x, s.y, s.width, s.height);
-                }
-            });
+      // Desenhar Balas
+      ctx.fillStyle = '#ff007f';
+      bullets.forEach(b => ctx.fillRect(b.x, b.y, 4, 10));
 
-            ctx.fillStyle = "#ff0055";
-            bullets.forEach(b => ctx.fillRect(b.x, b.y, b.width, b.height));
+      ctx.fillStyle = '#ff4444';
+      enemyBullets.forEach(eb => ctx.fillRect(eb.x, eb.y, 4, 10));
 
-            ctx.fillStyle = "#ffcc00";
-            enemyBullets.forEach(eb => ctx.fillRect(eb.x, eb.y, eb.width, eb.height));
-
-            if (boss) {
-                ctx.fillStyle = "#9900ff";
-                ctx.fillRect(boss.x, boss.y, boss.width, boss.height);
-                ctx.fillStyle = "#333";
-                ctx.fillRect(100, 10, 200, 10);
-                ctx.fillStyle = "#ff0055";
-                ctx.fillRect(100, 10, (boss.hp / boss.maxHp) * 200, 10);
-            } else {
-                ctx.fillStyle = "#ff0055";
-                aliens.forEach(a => { if (a.alive) ctx.fillRect(a.x, a.y, a.width, a.height); });
-            }
-
-            ctx.fillStyle = "#00ffcc";
-            ctx.font = "14px Courier New";
-            ctx.fillText(`Pontos: ${score}`, 10, 20);
-            ctx.fillText(`Fase: ${wave}`, 170, 20);
-            ctx.fillText(`Vidas: ${"❤️".repeat(lives)}`, 280, 20);
+      // Desenhar Inimigos
+      enemies.forEach(e => {
+        if (e.alive) {
+          ctx.fillStyle = freezeTimer > 0 ? '#00f0ff' : '#00ff66';
+          ctx.fillRect(e.x, e.y, e.w, e.h);
         }
+      });
+
+      // Desenhar Boss
+      if (boss) {
+        ctx.fillStyle = '#ff0055';
+        ctx.fillRect(boss.x, boss.y, boss.w, boss.h);
+        // Barra de Vida do Boss
+        ctx.fillStyle = '#333';
+        ctx.fillRect(200, 15, 400, 15);
+        ctx.fillStyle = '#ff0055';
+        ctx.fillRect(200, 15, (boss.hp / boss.maxHp) * 400, 15);
+      }
+
+      // Desenhar UFO
+      if (ufo) {
+        ctx.fillStyle = '#ff0000';
+        ctx.fillRect(ufo.x, ufo.y, ufo.w, ufo.h);
+      }
+
+      // Desenhar Moedas
+      ctx.fillStyle = '#ffd700';
+      coinsList.forEach(c => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Desenhar Power-ups
+      powerups.forEach(p => {
+        ctx.fillStyle = p.type === 'P' ? '#ff007f' : p.type === 'S' ? '#00f0ff' : '#00ff66';
+        ctx.fillRect(p.x, p.y, 16, 16);
+        ctx.fillStyle = '#000';
+        ctx.font = 'bold 12px monospace';
+        ctx.fillText(p.type, p.x + 4, p.y + 13);
+      });
     }
 
     function gameLoop() {
-        update();
-        draw();
-        requestAnimationFrame(gameLoop);
+      if (isPaused) return;
+      update();
+      draw();
+      gameLoopId = requestAnimationFrame(gameLoop);
     }
 
-    gameLoop();
-</script>
+    function nextLevel() {
+      level++;
+      if (level > 3) {
+        alert(`🏆 PARABÉNS! VOCÊ COMPLETOU A CAMPANHA BÁSICA!\nScore Final: ${score}\nCoins Ganhos: ${coinsEarned}`);
+        finishGame();
+      } else {
+        alert(`🚀 FASE ${level-1} CONCLUÍDA! PREPARE-SE PARA A FASE ${level}`);
+        initLevel();
+      }
+    }
+
+    function gameOver() {
+      alert(`💥 GAME OVER!\nScore: ${score}\nMoedas Salvas: ${coinsEarned}`);
+      finishGame();
+    }
+
+    function finishGame() {
+      playerData.coins += coinsEarned;
+      savePlayerData();
+      updateUI();
+      cancelAnimationFrame(gameLoopId);
+      showScreen('screen-menu');
+    }
+  </script>
 </body>
 </html>
