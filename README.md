@@ -1,73 +1,146 @@
-# 👾 Space Invaders Deluxe Command & Pixels update (v4.0)
-> **Neon Forge Studios Presents**
+👾 Space Invaders Deluxe - Neon Forge (v4.5)
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Status](https://img.shields.io/badge/status-Release%20v4.0-brightgreen.svg)
-![Version](https://img.shields.io/badge/version-v4.0%20Deluxe-ff007f.svg)
+🚀 Neon Forge Studios Presents
 
-Uma releitura **Arcade Retro-Futurista** do clássico *Space Invaders*, desenvolvida do zero em **HTML5, CSS3 e JavaScript puro (Canvas Engine)**. O jogo traz uma experiência rica em efeitos visuais Neon, sistema de economia interna (*Space Coins*), garagem de naves customizáveis, chefões e suporte completo para PC e Mobile!
+"License" (https://img.shields.io/badge/license-MIT-blue)
+"Status" (https://img.shields.io/badge/status-Release%20v4.5-brightgreen)
+"Version" (https://img.shields.io/badge/version-v4.5%20Deluxe-pink)
 
----
+Uma releitura Arcade Retro-Futurista do clássico Space Invaders, desenvolvida do zero em HTML5, CSS3 e JavaScript puro (Canvas Engine).
 
-## ⚡ Destaques da Versão 4.0 Deluxe
-
-* 💻/📱 **Diagnóstico de Dispositivo:** Calibração automática e interface adaptada para Teclado (PC) e Controles Touch Screen (Mobile).
-* 👤 **Sistema de Perfil Local:** Registro de Nick e salvamento automático de progresso/moedas via `localStorage`.
-* 🛸 **Garagem de 10 Naves:** Escolha entre 10 modelos únicos com atributos próprios de **Velocidade** e **Resistência (HP)**.
-* 💥 **Sistema de Combate Dinâmico:**
-  * Inimigos que respondem ao ataque e atiram contra o jogador.
-  * 🛡️ **3 Escudos Destrutíveis** no campo de batalha com barra de vida acumulativa.
-  * 👑 **Chefão (Boss)** com barra de vida expansiva e padrões de tiro na Fase 3.
-  * 🛸 **UFO Bônus Vermelho** com recompensas em moedas.
-* 🧪 **Sistema de Power-ups (Drops):**
-  * 🟢 **[P]** Tiro Triplo
-  * 🔵 **[S]** Escudo Protetor Temporal
-  * ❄️ **[T]** Congelar Tempo (Paralisa as hordas inimigas)
-* ⏸️ **Menu de Pausa & Interatividade:** Pause a qualquer momento (`ESC` ou `P`), visualize Créditos e o Update Log direto no jogo.
+O jogo entrega uma experiência imersiva com estética Neon, sistema de economia interna (Space Coins), Modo História com capítulos, oficina de customização, múltiplos tipos de inimigos e suporte completo para PC e Mobile!
 
 ---
 
-## 🎮 Como Jogar
+⚡ Destaques da Versão 4.5
 
-### 💻 No PC (Computador / Notebook)
-* **`Seta Esquerda` / `A`**: Mover para a Esquerda
-* **`Seta Direita` / `D`**: Mover para a Direita
-* **`Barra de Espaço`**: Atirar
-* **`ESC` / `P`**: Pausar Jogo
+📖 Modo História — "Operação Égide"
 
-### 📱 No Mobile (Celular / Tablet)
-* Utilize os **botões virtuais de toque** posicionados na parte inferior da tela para navegação, tiro e pausa.
+- Avance por capítulos narrativos.
+- Receba briefings operacionais antes de cada missão.
+- Enfrente desafios progressivos ao longo da campanha.
 
----
+👾 Novas Variantes de Inimigos
 
-## 🛠️ Tecnologias Utilizadas
+- 🛡️ Blindados: Maior resistência e dano visual progressivo em ranhuras conforme sofrem disparos.
+- ⚡ Ligeiros: Unidades rápidas com movimentação acelerada no campo de batalha.
 
-* **HTML5 Canvas:** Renderização gráfica do combate em tempo real a 60 FPS.
-* **CSS3:** Efeitos de iluminação *Neon Glow*, estilização retrô e responsividade.
-* **JavaScript (ES6+):** Motor do jogo (*Game Loop*), física simples, sistema de colisão (AABB) e gerenciamento de estado.
+🎨 Oficina de Customização de Laser
 
----
+- Altere a cor do disparo laser da sua nave em tempo real.
+- Utilize o seletor de cores disponível na Garagem.
 
-## 🚀 O que vem aí na v4.5 (Parte 2)?
+🌐 Suporte Multi-idioma em Tempo Real
 
-* 🎬 **Modo História ("Operação Égide"):** 4 Capítulos com cutscenes em estilo Pixel Art / HQ e caixa de texto interativa.
-* 👾 **Novos Inimigos:** Variantes *Blindado* (com dano visual em ranhuras), *Ligeiro* (zigue-zague) e *Bombardeiro*.
-* 🎨 **Oficina de Customização:** Personalização de cores da lataria, efeitos sonoros e cores dos projéteis laser.
-* 🌐 **Idiomas em Tempo Real:** Suporte a Português (PT-BR), Inglês (EN-US) e Espanhol (ES) na aba de Configurações.
-* 🏆 **Ranking Global Online:** Tabela de pontuação mundial em tempo real.
+Alterne instantaneamente toda a interface entre:
 
----
+- 🇧🇷 Português (PT-BR)
+- 🇺🇸 Inglês (EN-US)
+- 🇪🇸 Espanhol (ES)
 
-## 👥 Créditos & Desenvolvimento
-
-| Função | Integrante |
-| :--- | :--- |
-| **Ideias, Design & Programação** | **Calebe (`C4L1BRE_DEV`)** |
-| **Programação & Músicas** | **Jarvis** |
-| **Beta Testing & QA** | **Pedro Lucas** |
+A troca de idioma está disponível no menu Configurações.
 
 ---
 
-<p align="center">
-  Desenvolvido com 💖 pela <b>Neon Forge Studios</b>
-</p>
+🛸 Garagem de 10 Naves
+
+Escolha entre 10 modelos únicos, cada um com seus próprios atributos de:
+
+- ⚡ Velocidade
+- 🛡️ Resistência (HP)
+
+---
+
+💥 Sistema de Combate Dinâmico
+
+- 👾 Inimigos que atiram contra o jogador.
+- 🛡️ 3 escudos destrutíveis espalhados pelo campo de batalha.
+- 👑 Chefão (Boss) com barra de vida expansiva na Fase 3.
+- 🛸 UFO Bônus Vermelho com recompensas em moedas.
+
+---
+
+🧪 Sistema de Power-ups (Drops)
+
+Durante as partidas, diferentes Power-ups podem aparecer:
+
+- 🟢 [P] Tiro Triplo
+- 🔵 [S] Escudo Protetor Temporal
+- ❄️ [T] Congelar Tempo
+
+---
+
+👤 Sistema de Perfil Local
+
+O jogo utiliza "localStorage" para salvar automaticamente:
+
+- 👤 Nick do jogador
+- 🪙 Space Coins
+- 📈 Progresso
+- ⚙️ Configurações
+
+---
+
+🎮 Como Jogar
+
+💻 No PC — Computador / Notebook
+
+Ação| Controle
+⬅️ Mover para a esquerda| "←" / "A"
+➡️ Mover para a direita| "→" / "D"
+🔫 Atirar| "Espaço"
+⏸️ Pausar| "ESC" / "P"
+
+📱 No Mobile — Celular / Tablet
+
+Utilize os botões virtuais de toque na tela para:
+
+- ⬅️ Movimentação para a esquerda
+- ➡️ Movimentação para a direita
+- 🔫 Atirar
+- ⏸️ Pausar
+
+---
+
+🛠️ Tecnologias Utilizadas
+
+🎨 HTML5 Canvas
+
+Renderização gráfica do combate em tempo real a 60 FPS.
+
+✨ CSS3
+
+Utilizado para:
+
+- Neon Glow
+- Efeitos de iluminação
+- Estilização retrô
+- Layout responsivo
+
+⚙️ JavaScript (ES6+)
+
+Responsável por:
+
+- 🎮 Engine do jogo
+- 💥 Sistema de colisão (AABB)
+- 🌐 Sistema de localização
+- 👤 Gerenciamento do estado do jogador
+- 🕹️ Controles
+- 👾 Comportamento dos inimigos
+
+---
+
+👥 Créditos & Desenvolvimento
+
+Função| Integrante
+💡 Ideias, Design & Programação| Calebe (C4L1BRE_DEV)
+💻 Programação & Músicas| Jarvis
+🧪 Beta Testing & QA| Pedro Lucas
+
+---
+
+🏢 Neon Forge Studios
+
+Desenvolvido pela Neon Forge Studios. 🚀
+
+«"O futuro do Arcade começa aqui." 👾✨»
