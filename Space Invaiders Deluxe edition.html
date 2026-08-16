@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Space Invaders Deluxe - Neon Forge (v4.0)</title>
+  <title>Space Invaders Deluxe - Neon Forge (v4.5)</title>
   <style>
     * {
       box-sizing: border-box;
@@ -68,7 +68,7 @@
       box-shadow: 0 0 15px #00f0ff;
     }
 
-    input {
+    input, select {
       padding: 10px;
       font-size: 1rem;
       border: 2px solid #ff007f;
@@ -174,6 +174,16 @@
       font-size: 1.2rem;
     }
 
+    .story-box {
+      border: 2px solid #ff007f;
+      padding: 15px;
+      background: #000;
+      color: #00f0ff;
+      text-align: left;
+      font-size: 0.9rem;
+      border-radius: 5px;
+    }
+
     .hidden { display: none !important; }
   </style>
 </head>
@@ -181,30 +191,32 @@
 
   <div id="screen-diagnostic" class="screen active">
     <h2>⚡ NEON FORGE STUDIOS</h2>
-    <p>Selecione seu Dispositivo para Calibração:</p>
-    <button onclick="selectDevice('desktop')">💻 Computador / Notebook</button>
-    <button onclick="selectDevice('mobile')">📱 Celular / Tablet</button>
+    <p id="lbl-device">Selecione seu Dispositivo para Calibração:</p>
+    <button onclick="selectDevice('desktop')" id="btn-pc">💻 Computador / Notebook</button>
+    <button onclick="selectDevice('mobile')" id="btn-mobile">📱 Celular / Tablet</button>
   </div>
 
   <div id="screen-login" class="screen">
-    <h2>🎮 RECRUTAMENTO DE PILOTO</h2>
-    <p>Identifique-se para acessar o comando:</p>
+    <h2 id="lbl-login">🎮 RECRUTAMENTO DE PILOTO</h2>
+    <p id="lbl-login-desc">Identifique-se para acessar o comando:</p>
     <input type="text" id="player-nick" placeholder="Digite seu Nick..." maxlength="12">
-    <button onclick="confirmLogin()">ENTRAR NO COCKPIT</button>
+    <button onclick="confirmLogin()" id="btn-login">ENTRAR NO COCKPIT</button>
   </div>
 
   <div id="screen-menu" class="screen">
-    <h1 class="title-neon">SPACE INVADERS<br><span>DELUXE v4.0</span></h1>
+    <h1 class="title-neon">SPACE INVADERS<br><span>DELUXE v4.5</span></h1>
     <div class="pilot-card">
-      <p>👨‍✈️ Piloto: <strong id="card-nick">---</strong></p>
+      <p>👨‍✈️ <span id="lbl-pilot">Piloto</span>: <strong id="card-nick">---</strong></p>
       <p>🪙 Space Coins: <strong id="card-coins">0</strong></p>
-      <p>🛸 Nave Atual: <strong id="card-ship">Alpha-1</strong></p>
+      <p>🛸 <span id="lbl-ship">Nave</span>: <strong id="card-ship">Alpha-1</strong></p>
     </div>
     
-    <button onclick="startGame()">🚀 JOGAR FASE 1</button>
-    <button onclick="openHangar()">🛸 GARAGEM DE NAVES</button>
-    <button onclick="toggleModal('modal-update')">📜 UPDATE LOG</button>
-    <button onclick="toggleModal('modal-credits')">🏆 CRÉDITOS</button>
+    <button onclick="startArcadeMode()" id="btn-arcade">🚀 MODO ARCADE</button>
+    <button onclick="openStoryMode()" id="btn-story">🎬 MODO HISTÓRIA</button>
+    <button onclick="openHangar()" id="btn-hangar">🛸 GARAGEM & OFICINA</button>
+    <button onclick="toggleModal('modal-settings')" id="btn-settings">⚙️ CONFIGURAÇÕES / IDIOMA</button>
+    <button onclick="toggleModal('modal-update')" id="btn-update">📜 UPDATE LOG</button>
+    <button onclick="toggleModal('modal-credits')" id="btn-credits">🏆 CRÉDITOS</button>
   </div>
 
   <div id="screen-game" class="screen">
@@ -226,20 +238,50 @@
     </div>
   </div>
 
+  <div id="modal-story" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="story-title">📖 OPERAÇÃO ÉGIDE - CAPÍTULO 1</h3>
+      <div class="story-box" id="story-text">
+        Anomalias detectadas no setor 7. Esquadrões hostis se aproximam. Piloto, assuma o controle do seu caça e defenda a linha de frente.
+      </div>
+      <button onclick="startStoryChapter()" id="btn-start-chap">INICIAR MISSÃO</button>
+      <button onclick="toggleModal('modal-story')" id="btn-close-story">FECHAR</button>
+    </div>
+  </div>
+
   <div id="modal-hangar" class="modal hidden">
     <div class="modal-content">
-      <h3>🛸 GARAGEM DE NAVES (10 MODELOS)</h3>
-      <p>Suas Moedas: <span id="hangar-coins" style="color:#ffd700">0</span></p>
+      <h3 id="lbl-hangar-title">🛸 GARAGEM & CUSTOMIZAÇÃO</h3>
+      <p>Moedas: <span id="hangar-coins" style="color:#ffd700">0</span></p>
+      
+      <div style="border: 1px solid #333; padding: 8px; margin-bottom: 5px;">
+        <label>Cor do Laser:</label>
+        <input type="color" id="laser-color-picker" value="#ff007f" onchange="updateLaserColor(this.value)">
+      </div>
+
       <div id="ship-grid" class="ship-grid"></div>
       <button onclick="toggleModal('modal-hangar')">FECHAR</button>
     </div>
   </div>
 
+  <div id="modal-settings" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="lbl-settings-title">⚙️ CONFIGURAÇÕES</h3>
+      <label id="lbl-lang-select">Idioma / Language:</label>
+      <select id="lang-select" onchange="changeLanguage(this.value)">
+        <option value="pt">Português (PT-BR)</option>
+        <option value="en">English (EN-US)</option>
+        <option value="es">Español (ES)</option>
+      </select>
+      <button onclick="toggleModal('modal-settings')">FECHAR</button>
+    </div>
+  </div>
+
   <div id="modal-pause" class="modal hidden">
     <div class="modal-content">
-      <h3>⏸️ JOGO PAUSADO</h3>
-      <button onclick="togglePause()">RESUMIR JOGO</button>
-      <button onclick="quitToMenu()">SAIR PARA O MENU</button>
+      <h3 id="lbl-pause-title">⏸️ JOGO PAUSADO</h3>
+      <button onclick="togglePause()" id="btn-resume">RESUMIR JOGO</button>
+      <button onclick="quitToMenu()" id="btn-quit">SAIR PARA O MENU</button>
     </div>
   </div>
 
@@ -256,18 +298,73 @@
 
   <div id="modal-update" class="modal hidden">
     <div class="modal-content">
-      <h3>📜 UPDATE LOG - v4.0</h3>
-      <p>• Acesso livre oficial sem exigência de chave beta.</p>
-      <p>• Garagem com 10 Naves exclusivas com atributos de velocidade e vida.</p>
-      <p>• Sistema de Inimigos que Atiram e Chefão com barra de HP na Fase 3.</p>
-      <p>• Drops de Power-ups: [P] Tiro Triplo, [S] Escudo e [T] Congelar Tempo.</p>
-      <p>• 3 Escudos Destrutíveis no campo de batalha.</p>
+      <h3>📜 UPDATE LOG - v4.5</h3>
+      <p>• Modo História "Operação Égide" com diálogos operacionais.</p>
+      <p>• Novos Tipos de Inimigos: Blindados (com HP alto) e Ligeiros.</p>
+      <p>• Oficina de Customização de Laser da Nave.</p>
+      <p>• Suporte Multi-idioma (Português, Inglês e Espanhol).</p>
       <button onclick="toggleModal('modal-update')">FECHAR</button>
     </div>
   </div>
 
   <script>
-    // BASE DE DADOS DAS NAVES
+    const TRANSLATIONS = {
+      pt: {
+        device: "Selecione seu Dispositivo para Calibração:",
+        pc: "💻 Computador / Notebook",
+        mobile: "📱 Celular / Tablet",
+        login: "🎮 RECRUTAMENTO DE PILOTO",
+        loginDesc: "Identifique-se para acessar o comando:",
+        enter: "ENTRAR NO COCKPIT",
+        pilot: "Piloto",
+        ship: "Nave",
+        arcade: "🚀 MODO ARCADE",
+        story: "🎬 MODO HISTÓRIA",
+        hangar: "🛸 GARAGEM & OFICINA",
+        settings: "⚙️ CONFIGURAÇÕES / IDIOMA",
+        resume: "RESUMIR JOGO",
+        quit: "SAIR PARA O MENU"
+      },
+      en: {
+        device: "Select Your Device for Calibration:",
+        pc: "💻 Desktop / Laptop",
+        mobile: "📱 Mobile / Tablet",
+        login: "🎮 PILOT RECRUITMENT",
+        loginDesc: "Identify yourself to enter command:",
+        enter: "ENTER COCKPIT",
+        pilot: "Pilot",
+        ship: "Ship",
+        arcade: "🚀 ARCADE MODE",
+        story: "🎬 STORY MODE",
+        hangar: "🛸 HANGAR & WORKSHOP",
+        settings: "⚙️ SETTINGS / LANGUAGE",
+        resume: "RESUME GAME",
+        quit: "EXIT TO MENU"
+      },
+      es: {
+        device: "Selecciona tu Dispositivo para Calibración:",
+        pc: "💻 Computadora / Laptop",
+        mobile: "📱 Móvil / Tableta",
+        login: "🎮 RECLUTAMIENTO DE PILOTO",
+        loginDesc: "Identifícate para entrar al comando:",
+        enter: "ENTRAR AL COCKPIT",
+        pilot: "Piloto",
+        ship: "Nave",
+        arcade: "🚀 MODO ARCADE",
+        story: "🎬 MODO HISTORIA",
+        hangar: "🛸 GARAJE Y TALLER",
+        settings: "⚙️ CONFIGURACIÓN / IDIOMA",
+        resume: "REANUDAR JUEGO",
+        quit: "SALIR AL MENÚ"
+      }
+    };
+
+    const STORY_CHAPTERS = [
+      { title: "Capítulo 1: Invasão Orbital", text: "Sensores detectaram uma frota não identificada entrando na órbita terrestre. Destrua a primeira onda antes que alcancem os escudos de energia." },
+      { title: "Capítulo 2: Campo de Asteroides", text: "Inimigos blindados estão usando os destroços locais como cobertura. Mantenha o fogo continuo e tome cuidado com os projéteis rápidos." },
+      { title: "Capítulo 3: O Cerco Final", text: "O nave-mãe inimiga entrou na zona de combate. Elimine as forças de apoio antes de encarar o núcleo de comando!" }
+    ];
+
     const SHIPS_DATA = [
       { id: 0, name: "Alpha-1", price: 0, color: "#00ff66", speed: 5, hp: 3 },
       { id: 1, name: "Striker-V", price: 100, color: "#00f0ff", speed: 6, hp: 3 },
@@ -281,16 +378,44 @@
       { id: 9, name: "Galactic Dominator", price: 5000, color: "#10b981", speed: 9, hp: 6 }
     ];
 
-    // ESTADO DO JOGADOR
     let playerData = {
       nick: "Piloto",
       coins: 0,
       selectedShip: 0,
       unlockedShips: [0],
-      device: "desktop"
+      device: "desktop",
+      lang: "pt",
+      laserColor: "#ff007f",
+      storyChapter: 0
     };
 
-    // CONTROLES DE INTERFACE
+    let gameMode = 'arcade';
+
+    function changeLanguage(lang) {
+      playerData.lang = lang;
+      const t = TRANSLATIONS[lang];
+      document.getElementById('lbl-device').innerText = t.device;
+      document.getElementById('btn-pc').innerText = t.pc;
+      document.getElementById('btn-mobile').innerText = t.mobile;
+      document.getElementById('lbl-login').innerText = t.login;
+      document.getElementById('lbl-login-desc').innerText = t.loginDesc;
+      document.getElementById('btn-login').innerText = t.enter;
+      document.getElementById('lbl-pilot').innerText = t.pilot;
+      document.getElementById('lbl-ship').innerText = t.ship;
+      document.getElementById('btn-arcade').innerText = t.arcade;
+      document.getElementById('btn-story').innerText = t.story;
+      document.getElementById('btn-hangar').innerText = t.hangar;
+      document.getElementById('btn-settings').innerText = t.settings;
+      document.getElementById('btn-resume').innerText = t.resume;
+      document.getElementById('btn-quit').innerText = t.quit;
+      savePlayerData();
+    }
+
+    function updateLaserColor(color) {
+      playerData.laserColor = color;
+      savePlayerData();
+    }
+
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
@@ -315,10 +440,15 @@
       const saved = localStorage.getItem(`player_${playerData.nick}`);
       if (saved) {
         playerData = JSON.parse(saved);
+        if(!playerData.laserColor) playerData.laserColor = "#ff007f";
+        if(!playerData.lang) playerData.lang = "pt";
       } else {
         savePlayerData();
       }
 
+      document.getElementById('lang-select').value = playerData.lang;
+      document.getElementById('laser-color-picker').value = playerData.laserColor;
+      changeLanguage(playerData.lang);
       updateUI();
       showScreen('screen-menu');
     }
@@ -331,6 +461,24 @@
       document.getElementById('card-nick').innerText = playerData.nick;
       document.getElementById('card-coins').innerText = playerData.coins;
       document.getElementById('card-ship').innerText = SHIPS_DATA[playerData.selectedShip].name;
+    }
+
+    function openStoryMode() {
+      const chap = STORY_CHAPTERS[Math.min(playerData.storyChapter, STORY_CHAPTERS.length - 1)];
+      document.getElementById('story-title').innerText = chap.title;
+      document.getElementById('story-text').innerText = chap.text;
+      toggleModal('modal-story');
+    }
+
+    function startStoryChapter() {
+      toggleModal('modal-story');
+      gameMode = 'story';
+      startGame();
+    }
+
+    function startArcadeMode() {
+      gameMode = 'arcade';
+      startGame();
     }
 
     function openHangar() {
@@ -347,7 +495,7 @@
         card.innerHTML = `
           <strong style="color:${ship.color}">${ship.name}</strong>
           <span>Velocidade: ${ship.speed} | HP: ${ship.hp}</span>
-          <span>${isUnlocked ? '🔓 Adquirida' : `🪙 ${ship.price} Coins`}</span>
+          <span>${isUnlocked ? '🔓 OK' : `🪙 ${ship.price}`}</span>
         `;
 
         const btn = document.createElement('button');
@@ -373,7 +521,7 @@
               updateUI();
               openHangar();
             } else {
-              alert("Moedas insuficientes!");
+              alert("Coins insuficientes!");
             }
           };
         }
@@ -384,7 +532,7 @@
       toggleModal('modal-hangar');
     }
 
-    // MOTOR DO JOGO (CANVAS ENGINE v4.0)
+    // MOTOR DO JOGO (CANVAS ENGINE v4.5)
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
@@ -406,7 +554,6 @@
     let ufo = null;
 
     let enemyDirection = 1;
-    let enemyStepDown = false;
     let enemyShootTimer = 0;
     let freezeTimer = 0;
 
@@ -420,7 +567,6 @@
 
     window.addEventListener('keyup', e => keys[e.key] = false);
 
-    // BOTOES MOBILE
     document.getElementById('btn-left').addEventListener('touchstart', () => keys['ArrowLeft'] = true);
     document.getElementById('btn-left').addEventListener('touchend', () => keys['ArrowLeft'] = false);
     document.getElementById('btn-right').addEventListener('touchstart', () => keys['ArrowRight'] = true);
@@ -428,7 +574,7 @@
     document.getElementById('btn-fire').addEventListener('click', () => firePlayerBullet());
 
     function startGame() {
-      level = 1;
+      level = gameMode === 'story' ? playerData.storyChapter + 1 : 1;
       score = 0;
       coinsEarned = 0;
       initLevel();
@@ -454,35 +600,40 @@
       boss = null;
       ufo = null;
 
-      // Criar Escudos
       shields = [];
       for (let i = 0; i < 3; i++) {
         shields.push({ x: 150 + i * 220, y: 370, w: 70, h: 30, hp: 10 });
       }
 
-      // Criar Inimigos ou Boss
       enemies = [];
       if (level === 3) {
-        // Fase do Chefão
         boss = { x: 320, y: 50, w: 160, h: 60, hp: 50, maxHp: 50, speed: 3, dir: 1 };
       } else {
         const rows = 3 + level;
         const cols = 8;
         for (let r = 0; r < rows; r++) {
           for (let c = 0; c < cols; c++) {
-            enemies.push({ x: 100 + c * 70, y: 50 + r * 35, w: 35, h: 25, alive: true });
+            let type = 'normal';
+            let hp = 1;
+            let color = '#00ff66';
+
+            if (r === 0) { type = 'armored'; hp = 3; color = '#ff9900'; } 
+            else if (r === 1) { type = 'fast'; hp = 1; color = '#00f0ff'; }
+
+            enemies.push({ x: 100 + c * 70, y: 50 + r * 35, w: 35, h: 25, alive: true, type, hp, maxHp: hp, color });
           }
         }
       }
     }
 
     function firePlayerBullet() {
+      const color = playerData.laserColor || '#ff007f';
       if (player.tripleShot > 0) {
-        bullets.push({ x: player.x + 18, y: player.y, dx: 0, dy: -8 });
-        bullets.push({ x: player.x + 5, y: player.y, dx: -2, dy: -8 });
-        bullets.push({ x: player.x + 30, y: player.y, dx: 2, dy: -8 });
+        bullets.push({ x: player.x + 18, y: player.y, dx: 0, dy: -8, color });
+        bullets.push({ x: player.x + 5, y: player.y, dx: -2, dy: -8, color });
+        bullets.push({ x: player.x + 30, y: player.y, dx: 2, dy: -8, color });
       } else {
-        bullets.push({ x: player.x + 18, y: player.y, dx: 0, dy: -8 });
+        bullets.push({ x: player.x + 18, y: player.y, dx: 0, dy: -8, color });
       }
     }
 
@@ -505,25 +656,20 @@
     function update() {
       if (isPaused) return;
 
-      // Movimento Jogador
       if ((keys['ArrowLeft'] || keys['a']) && player.x > 0) player.x -= player.speed;
       if ((keys['ArrowRight'] || keys['d']) && player.x < canvas.width - player.w) player.x += player.speed;
 
-      // Timers de Buff
       if (player.tripleShot > 0) player.tripleShot--;
       if (freezeTimer > 0) freezeTimer--;
 
-      // Mover Balas do Jogador
       bullets.forEach((b, idx) => {
         b.x += (b.dx || 0);
         b.y += b.dy;
         if (b.y < 0) bullets.splice(idx, 1);
       });
 
-      // Mover Balas Inimigas
       enemyBullets.forEach((eb, idx) => {
         eb.y += 5;
-        // Colisão com Jogador
         if (eb.x > player.x && eb.x < player.x + player.w && eb.y > player.y && eb.y < player.y + player.h) {
           enemyBullets.splice(idx, 1);
           if (player.shieldActive) {
@@ -537,12 +683,12 @@
         }
       });
 
-      // Mover Inimigos (Se não estiver congelado)
       if (freezeTimer === 0 && enemies.length > 0) {
         let touchEdge = false;
         enemies.forEach(e => {
           if (!e.alive) return;
-          e.x += enemyDirection * (1 + level * 0.5);
+          let speedMult = e.type === 'fast' ? 1.8 : 1.0;
+          e.x += enemyDirection * (1 + level * 0.4) * speedMult;
           if (e.x > canvas.width - 40 || e.x < 10) touchEdge = true;
         });
 
@@ -551,7 +697,6 @@
           enemies.forEach(e => e.y += 15);
         }
 
-        // Inimigos Atiram
         enemyShootTimer++;
         if (enemyShootTimer > Math.max(20, 60 - level * 10)) {
           enemyShootTimer = 0;
@@ -563,17 +708,14 @@
         }
       }
 
-      // Mover Chefão (Fase 3)
       if (boss) {
         boss.x += boss.speed * boss.dir;
         if (boss.x > canvas.width - boss.w || boss.x < 0) boss.dir *= -1;
-
         if (Math.random() < 0.05) {
           enemyBullets.push({ x: boss.x + Math.random() * boss.w, y: boss.y + boss.h });
         }
       }
 
-      // UFO Bônus Aparecimento Aleatório
       if (!ufo && Math.random() < 0.002) {
         ufo = { x: 0, y: 20, w: 45, h: 20, speed: 3 };
       }
@@ -582,9 +724,7 @@
         if (ufo.x > canvas.width) ufo = null;
       }
 
-      // Colisões de Balas vs Inimigos
       bullets.forEach((b, bIdx) => {
-        // Colisão com UFO
         if (ufo && b.x > ufo.x && b.x < ufo.x + ufo.w && b.y > ufo.y && b.y < ufo.y + ufo.h) {
           score += 100;
           coinsList.push({ x: ufo.x, y: ufo.y, val: 20 });
@@ -593,7 +733,6 @@
           return;
         }
 
-        // Colisão com Boss
         if (boss && b.x > boss.x && b.x < boss.x + boss.w && b.y > boss.y && b.y < boss.y + boss.h) {
           boss.hp--;
           score += 20;
@@ -607,23 +746,22 @@
           return;
         }
 
-        // Colisão com Inimigos Padrão
         enemies.forEach(e => {
           if (e.alive && b.x > e.x && b.x < e.x + e.w && b.y > e.y && b.y < e.y + e.h) {
-            e.alive = false;
+            e.hp--;
             bullets.splice(bIdx, 1);
-            score += 10;
-
-            // Drop de Moedas ou Power-ups
-            if (Math.random() < 0.3) coinsList.push({ x: e.x, y: e.y, val: 5 });
-            if (Math.random() < 0.1) {
-              const types = ['P', 'S', 'T'];
-              powerups.push({ x: e.x, y: e.y, type: types[Math.floor(Math.random() * types.length)] });
+            if (e.hp <= 0) {
+              e.alive = false;
+              score += e.type === 'armored' ? 30 : 10;
+              if (Math.random() < 0.3) coinsList.push({ x: e.x, y: e.y, val: 5 });
+              if (Math.random() < 0.1) {
+                const types = ['P', 'S', 'T'];
+                powerups.push({ x: e.x, y: e.y, type: types[Math.floor(Math.random() * types.length)] });
+              }
             }
           }
         });
 
-        // Colisão com Escudos
         shields.forEach(s => {
           if (s.hp > 0 && b.x > s.x && b.x < s.x + s.w && b.y > s.y && b.y < s.y + s.h) {
             s.hp--;
@@ -632,7 +770,6 @@
         });
       });
 
-      // Mover e Coletar Moedas
       coinsList.forEach((c, idx) => {
         c.y += 2;
         if (c.x > player.x && c.x < player.x + player.w && c.y > player.y && c.y < player.y + player.h) {
@@ -641,23 +778,20 @@
         } else if (c.y > canvas.height) coinsList.splice(idx, 1);
       });
 
-      // Mover e Coletar Power-ups
       powerups.forEach((p, idx) => {
         p.y += 2;
         if (p.x > player.x && p.x < player.x + player.w && p.y > player.y && p.y < player.y + player.h) {
-          if (p.type === 'P') player.tripleShot = 300; // ~5 segundos
+          if (p.type === 'P') player.tripleShot = 300;
           if (p.type === 'S') player.shieldActive = true;
-          if (p.type === 'T') freezeTimer = 180; // ~3 segundos
+          if (p.type === 'T') freezeTimer = 180;
           powerups.splice(idx, 1);
         } else if (p.y > canvas.height) powerups.splice(idx, 1);
       });
 
-      // Checar Fim de Fase (Se todos os inimigos morreram)
       if (enemies.length > 0 && enemies.every(e => !e.alive)) {
         nextLevel();
       }
 
-      // Atualizar HUD
       document.getElementById('hud-score').innerText = score;
       document.getElementById('hud-level').innerText = level;
       document.getElementById('hud-coins').innerText = playerData.coins + coinsEarned;
@@ -667,7 +801,6 @@
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Desenhar Escudos
       shields.forEach(s => {
         if (s.hp > 0) {
           ctx.fillStyle = `rgba(0, 240, 255, ${s.hp / 10})`;
@@ -675,7 +808,6 @@
         }
       });
 
-      // Desenhar Jogador
       ctx.fillStyle = player.color;
       ctx.fillRect(player.x, player.y, player.w, player.h);
       if (player.shieldActive) {
@@ -684,39 +816,39 @@
         ctx.strokeRect(player.x - 5, player.y - 5, player.w + 10, player.h + 10);
       }
 
-      // Desenhar Balas
-      ctx.fillStyle = '#ff007f';
-      bullets.forEach(b => ctx.fillRect(b.x, b.y, 4, 10));
+      bullets.forEach(b => {
+        ctx.fillStyle = b.color || '#ff007f';
+        ctx.fillRect(b.x, b.y, 4, 10);
+      });
 
       ctx.fillStyle = '#ff4444';
       enemyBullets.forEach(eb => ctx.fillRect(eb.x, eb.y, 4, 10));
 
-      // Desenhar Inimigos
       enemies.forEach(e => {
         if (e.alive) {
-          ctx.fillStyle = freezeTimer > 0 ? '#00f0ff' : '#00ff66';
+          ctx.fillStyle = freezeTimer > 0 ? '#00f0ff' : e.color;
           ctx.fillRect(e.x, e.y, e.w, e.h);
+          if (e.type === 'armored' && e.hp < e.maxHp) {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(e.x + 5, e.y + 5, e.w - 10, 4);
+          }
         }
       });
 
-      // Desenhar Boss
       if (boss) {
         ctx.fillStyle = '#ff0055';
         ctx.fillRect(boss.x, boss.y, boss.w, boss.h);
-        // Barra de Vida do Boss
         ctx.fillStyle = '#333';
         ctx.fillRect(200, 15, 400, 15);
         ctx.fillStyle = '#ff0055';
         ctx.fillRect(200, 15, (boss.hp / boss.maxHp) * 400, 15);
       }
 
-      // Desenhar UFO
       if (ufo) {
         ctx.fillStyle = '#ff0000';
         ctx.fillRect(ufo.x, ufo.y, ufo.w, ufo.h);
       }
 
-      // Desenhar Moedas
       ctx.fillStyle = '#ffd700';
       coinsList.forEach(c => {
         ctx.beginPath();
@@ -724,7 +856,6 @@
         ctx.fill();
       });
 
-      // Desenhar Power-ups
       powerups.forEach(p => {
         ctx.fillStyle = p.type === 'P' ? '#ff007f' : p.type === 'S' ? '#00f0ff' : '#00ff66';
         ctx.fillRect(p.x, p.y, 16, 16);
@@ -743,17 +874,22 @@
 
     function nextLevel() {
       level++;
+      if (gameMode === 'story') {
+        playerData.storyChapter = Math.min(playerData.storyChapter + 1, STORY_CHAPTERS.length - 1);
+        savePlayerData();
+      }
+
       if (level > 3) {
-        alert(`🏆 PARABÉNS! VOCÊ COMPLETOU A CAMPANHA BÁSICA!\nScore Final: ${score}\nCoins Ganhos: ${coinsEarned}`);
+        alert(`🏆 COMPLETOU A CAMPANHA!\nScore: ${score}\nCoins: ${coinsEarned}`);
         finishGame();
       } else {
-        alert(`🚀 FASE ${level-1} CONCLUÍDA! PREPARE-SE PARA A FASE ${level}`);
+        alert(`🚀 FASE ${level-1} CONCLUÍDA! AVANÇANDO PARA A FASE ${level}`);
         initLevel();
       }
     }
 
     function gameOver() {
-      alert(`💥 GAME OVER!\nScore: ${score}\nMoedas Salvas: ${coinsEarned}`);
+      alert(`💥 GAME OVER!\nScore: ${score}\nCoins: ${coinsEarned}`);
       finishGame();
     }
 
